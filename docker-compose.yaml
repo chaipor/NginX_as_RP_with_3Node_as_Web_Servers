@@ -1,0 +1,45 @@
+services:
+  reverse_proxy:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./ssl:/etc/ssl
+    networks:
+      - frontend
+      - backend
+
+  web1:
+    image: node:20.15.0-slim
+    working_dir: /usr/src/nodeapp
+    volumes:
+      - ./node_about:/usr/src/nodeapp
+    command: bash -c "npm install && node index.js"
+    networks:
+      - backend
+
+  web2:
+    image: node:20.15.0-slim
+    working_dir: /usr/src/nodeapp
+    volumes:
+      - ./node_research:/usr/src/nodeapp
+    command: bash -c "npm install && node index.js"
+    networks:
+      - backend
+  
+  web3:
+    image: node:20.15.0-slim
+    working_dir: /usr/src/nodeapp
+    volumes:
+      - ./node_ct519:/usr/src/nodeapp
+    command: bash -c "npm install && node index.js"
+    networks:
+      - backend
+
+networks:
+  frontend:
+    driver: bridge
+  backend:
+    driver: bridge
